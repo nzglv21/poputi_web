@@ -4,7 +4,7 @@ import {
   Sparkles, 
   Wand2, 
   MapPin, 
-  Calendar, 
+
   Clock, 
   Check, 
   Car, 
@@ -16,7 +16,7 @@ import {
 
 import CitySelect from "../components/CitySelect"; // Предполагаем, что компонент там же
 // Типы (в реальном проекте лучше импортировать из types.ts)
-import type { TripRead, TripStopRead, Contact } from "../types/Trip";
+import type { TripRead} from "../types/Trip";
 
 // --- ВРЕМЕННЫЕ ЗАГЛУШКИ ДЛЯ ТИПОВ (если файла нет под рукой) ---
 // Если у вас есть файл types/Trip.ts, удалите этот блок и раскомментируйте импорт выше.
