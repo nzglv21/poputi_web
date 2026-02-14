@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import { X, MapPin } from "lucide-react";
 
 interface Props {
-  value: string;
+  value: string| undefined;
   onChange: (value: string) => void;
   placeholder: string;
   options: string[];

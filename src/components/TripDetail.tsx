@@ -9,7 +9,7 @@ import {
   Car,
   Package,
   Baby,
-  MapPin,
+
   Calendar,
   ChevronRight,
   Copy
@@ -24,7 +24,7 @@ interface TripDetailsProps {
 const TripDetails: React.FC<TripDetailsProps> = ({
   trip,
   onClose,
-  onToggleFull,
+//   onToggleFull,
 }) => {
   const sortedStops = useMemo(
     () => [...trip.stops].sort((a, b) => a.stop_order - b.stop_order),
@@ -32,7 +32,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
   );
   
   const firstStop = sortedStops[0];
-  const lastStop = sortedStops[sortedStops.length - 1];
+
   const contacts = trip.contacts || [];
 
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);

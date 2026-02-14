@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, 
   BrainCircuit, 
-  ScanLine, 
   Sparkles, 
   Wand2, 
   MapPin, 
