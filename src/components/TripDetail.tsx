@@ -110,7 +110,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
           
           {/* 1. Блок ВРЕМЯ И ДАТА (Акцент) */}
           <div className="bg-white p-6 pt-10 rounded-b-[32px] shadow-sm border-b border-gray-100 text-center relative z-10">
-             <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-2">
+             <div className="items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-2">
                  <Calendar className="w-3.5 h-3.5" />
                  {formatTripDate(firstStop?.arrival_time)}
              </div>
@@ -248,17 +248,33 @@ const TripDetails: React.FC<TripDetailsProps> = ({
                )}
 
                {/* Комментарий */}
-               {trip.raw_text && (
-                 <div className="mt-2 bg-gray-100/50 p-4 rounded-xl">
-                   <div className="flex items-center gap-2 mb-2 text-gray-400">
-                     <MessageSquare className="w-3 h-3" />
-                     <span className="text-[10px] font-bold uppercase">Комментарий</span>
-                   </div>
-                   <p className="text-sm text-gray-600 italic leading-snug">
-                     "{trip.raw_text}"
-                   </p>
-                 </div>
-               )}
+{(trip.raw_text || trip.message_link) && (
+  <div className="mt-2 bg-gray-100/50 p-4 rounded-xl">
+    <div className="flex items-center gap-2 mb-2 text-gray-400">
+      <MessageSquare className="w-3 h-3" />
+      <span className="text-[10px] font-bold uppercase">Комментарий</span>
+    </div>
+
+    {trip.raw_text && (
+      <p className="text-sm text-gray-600 italic leading-snug mb-3">
+        "{trip.raw_text}"
+      </p>
+    )}
+
+    {trip.message_link && (
+      <a
+        href={trip.message_link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+      >
+        <Send className="w-4 h-4" />
+        Перейти к сообщению
+      </a>
+    )}
+  </div>
+)}
+
             </div>
 
             {/* Нижний отступ для удобства скролла */}

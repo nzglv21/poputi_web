@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useRef, useState } from "react";
 import {
   Calendar,
   SlidersHorizontal,
@@ -28,6 +28,8 @@ const SearchPage: React.FC = () => {
   const [trips, setTrips] = useState<TripRead[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<TripRead | null>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
+
 
   const [search, setSearch] = useState<TripSearchParams>({
     fromCity: "",
@@ -39,12 +41,7 @@ const SearchPage: React.FC = () => {
     setSearch((prev) => ({ ...prev, [field]: value }));
   };
 
-  useEffect(() => {
-    setLoading(true);
-    tripAPI.getAllTrips()
-      .then((res) => setTrips(res))
-      .finally(() => setLoading(false));
-  }, []);
+
 
   const handleSwap = () => {
     setSearch((prev) => ({
@@ -135,13 +132,18 @@ const SearchPage: React.FC = () => {
           <div className="flex items-center gap-2 mt-2">
             
             {/* Поле даты */}
-            <div className="relative flex-1 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors border border-gray-100 overflow-hidden group">
-              <input
-                type="date"
-                value={search.date}
-                onChange={(e) => handleChange("date", e.target.value)}
-                className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
-              />
+                <div
+                onClick={() => dateRef.current?.showPicker()}
+                className="relative flex-1 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors border border-gray-100 overflow-hidden group cursor-pointer"
+                >
+            <input
+            ref={dateRef}
+            type="date"
+            value={search.date}
+            onChange={(e) => handleChange("date", e.target.value)}
+            className="hidden"
+            />
+
               <div className="flex items-center gap-3 px-4 py-4">
                 <Calendar size={18} className="text-gray-500 group-hover:text-gray-900 transition-colors" />
                 <div className="flex flex-col leading-none">

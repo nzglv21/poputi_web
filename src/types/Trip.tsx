@@ -35,9 +35,12 @@ export interface TripRead {
   platform_name: string;
   driver_id: number;
 
+  departure_time: string
+
   has_cargo: boolean;
   has_child_seat: boolean;
   is_taxi: boolean;
+  message_link?: string;
 
   raw_text?: string | null;
 

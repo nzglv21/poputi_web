@@ -73,6 +73,8 @@ const TripCreateAI: React.FC<TripCreateProps> = ({ onBack }) => {
       const mockResponse: TripRead = {
         id: Math.random(),
         created_at: new Date().toISOString(),
+        departure_time: new Date().toISOString(),
+
         contacts: [{ type: "phone", value: "+7 999 123-45-67" }],
         platform_name: "ai_generated",
         driver_id: 1,
