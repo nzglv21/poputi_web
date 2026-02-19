@@ -1,4 +1,4 @@
-import React, {  useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Calendar,
   SlidersHorizontal,
@@ -28,9 +28,8 @@ const SearchPage: React.FC = () => {
   const [trips, setTrips] = useState<TripRead[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<TripRead | null>(null);
-  const dateRef = useRef<HTMLInputElement>(null);
 
-
+  // Инициализируем сегодняшней датой в формате YYYY-MM-DD (нужно для input type="date")
   const [search, setSearch] = useState<TripSearchParams>({
     fromCity: "",
     toCity: "",
@@ -40,8 +39,6 @@ const SearchPage: React.FC = () => {
   const handleChange = (field: keyof TripSearchParams, value: string) => {
     setSearch((prev) => ({ ...prev, [field]: value }));
   };
-
-
 
   const handleSwap = () => {
     setSearch((prev) => ({
@@ -58,14 +55,19 @@ const SearchPage: React.FC = () => {
       .finally(() => setLoading(false));
   };
 
-  const formattedDate = new Date(search.date).toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    weekday: 'short'
-  });
+  // Форматирование для красивого отображения (например: "15 февраля, сб")
+  const getFormattedDate = (dateString: string) => {
+    if (!dateString) return "Выберите дату";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'long',
+      weekday: 'short'
+    });
+  };
 
   return (
-    <div className="flex flex-col h-full bg-[#F3F4F6]"> {/* Нейтральный фон */}
+    <div className="flex flex-col h-full bg-[#F3F4F6]">
       
       {/* --- БЛОК ПОИСКА --- */}
       <div className="px-4 pt-2 pb-6">
@@ -77,11 +79,9 @@ const SearchPage: React.FC = () => {
             {/* 1. ОТКУДА */}
             <div className="relative p-4 pb-3">
               <div className="flex items-center gap-3">
-                {/* Иконка - теперь нейтральная */}
                 <div className="text-gray-400 flex-shrink-0">
                   <MapPin size={20} strokeWidth={2} />
                 </div>
-                {/* Инпут */}
                 <div className="flex-1 min-w-0 pr-12">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Откуда</label>
                   <CitySelect
@@ -98,7 +98,7 @@ const SearchPage: React.FC = () => {
             {/* Разделительная линия */}
             <div className="mx-14 h-px bg-gray-200"></div>
 
-            {/* 2. КНОПКА SWAP (Плавающая справа, строгая) */}
+            {/* 2. КНОПКА SWAP */}
             <button
               onClick={handleSwap}
               className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white rounded-full shadow-sm border border-gray-200 text-gray-500 flex items-center justify-center hover:text-blue-600 hover:border-blue-200 transition-colors"
@@ -109,11 +109,9 @@ const SearchPage: React.FC = () => {
             {/* 3. КУДА */}
             <div className="relative p-4 pt-3">
               <div className="flex items-center gap-3">
-                {/* Иконка */}
                 <div className="text-gray-400 flex-shrink-0">
                   <Navigation size={20} strokeWidth={2} />
                 </div>
-                {/* Инпут */}
                 <div className="flex-1 min-w-0 pr-12"> 
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Куда</label>
                   <CitySelect
@@ -131,32 +129,37 @@ const SearchPage: React.FC = () => {
           {/* --- ДАТА и ФИЛЬТРЫ --- */}
           <div className="flex items-center gap-2 mt-2">
             
-            {/* Поле даты */}
-                <div
-                onClick={() => dateRef.current?.showPicker()}
-                className="relative flex-1 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors border border-gray-100 overflow-hidden group cursor-pointer"
-                >
-            <input
-            ref={dateRef}
-            type="date"
-            value={search.date}
-            onChange={(e) => handleChange("date", e.target.value)}
-            className="hidden"
-            />
+            {/* Поле даты (ИСПРАВЛЕНО: Прозрачный инпут поверх блока) */}
+            <div className="relative flex-1 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors border border-gray-100 overflow-hidden group">
+                
+                {/* ГЛАВНОЕ ИСПРАВЛЕНИЕ:
+                   Инпут растянут на весь блок (inset-0) и полностью прозрачен (opacity-0).
+                   z-10 гарантирует, что клик попадет именно по нему.
+                */}
+                <input
+                    type="date"
+                    value={search.date}
+                    onChange={(e) => handleChange("date", e.target.value)}
+                    className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                    style={{ WebkitAppearance: 'none' }} // Для iOS иногда полезно
+                />
 
-              <div className="flex items-center gap-3 px-4 py-4">
-                <Calendar size={18} className="text-gray-500 group-hover:text-gray-900 transition-colors" />
-                <div className="flex flex-col leading-none">
-                  <span className="text-[10px] text-gray-400 font-bold uppercase">Дата</span>
-                  <span className="text-sm font-bold text-gray-900 mt-1 capitalize">{formattedDate}</span>
+                {/* Визуальная часть (под инпутом) */}
+                <div className="flex items-center gap-3 px-4 py-4 pointer-events-none">
+                    <Calendar size={18} className="text-gray-500 group-hover:text-gray-900 transition-colors" />
+                    <div className="flex flex-col leading-none">
+                        <span className="text-[10px] text-gray-400 font-bold uppercase">Дата</span>
+                        <span className="text-sm font-bold text-gray-900 mt-1 capitalize">
+                            {getFormattedDate(search.date)}
+                        </span>
+                    </div>
                 </div>
-              </div>
             </div>
 
             {/* Кнопка открытия фильтров */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`h-[60px] w-[60px] flex items-center justify-center rounded-2xl border transition-all duration-200 ${
+              className={`h-[60px] w-[60px] flex items-center justify-center rounded-2xl border transition-all duration-200 flex-shrink-0 ${
                 showFilters 
                   ? "bg-gray-900 text-white border-gray-900" 
                   : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100"
@@ -178,7 +181,7 @@ const SearchPage: React.FC = () => {
             </div>
           )}
 
-          {/* --- ГЛАВНАЯ КНОПКА (Единственный яркий акцент) --- */}
+          {/* --- ГЛАВНАЯ КНОПКА --- */}
           <div className="mt-2">
             <button
               onClick={handleSubmit}
@@ -203,11 +206,10 @@ const SearchPage: React.FC = () => {
         </div>
       </div>
 
-      {/* --- РЕЗУЛЬТАТЫ --- */}
+      {/* --- РЕЗУЛЬТАТЫ (Ваши TripCard остались без изменений) --- */}
       <div className="flex-1 overflow-y-auto px-4 pb-24">
         {/* Заголовок списка */}
         <div className="flex items-center gap-2 mb-4 px-2 opacity-50">
-            {/* Небольшая цветная точка для статуса */}
             <div className={`h-1.5 w-1.5 rounded-full ${trips.length > 0 ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
             <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
               {loading ? "Загрузка..." : trips.length > 0 ? `Найдено: ${trips.length}` : "Список"}
@@ -227,6 +229,8 @@ const SearchPage: React.FC = () => {
                 key={trip.id} 
                 trip={trip} 
                 onClick={() => setSelectedTrip(trip)} 
+                searchFromCity={search.fromCity}
+                searchToCity={search.toCity}
               />
             ))}
           </div>
@@ -252,4 +256,3 @@ const SearchPage: React.FC = () => {
 };
 
 export default SearchPage;
-
